@@ -167,7 +167,14 @@ export function AgeChecklist({ ageRange, items = [] }: AgeChecklistProps) {
 
         {/* Progress bar */}
         <div className="mt-3 print:hidden">
-          <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+          <div
+            className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden"
+            role="progressbar"
+            aria-valuenow={progress}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label={`Packing progress: ${checked.size} of ${items.length} items packed`}
+          >
             <div
               className={`h-full rounded-full transition-all duration-500 ease-out ${
                 progress === 100 ? "bg-emerald-500" : "bg-teal-500"
@@ -242,7 +249,7 @@ export function AgeChecklist({ ageRange, items = [] }: AgeChecklistProps) {
             </ul>
           )
         ) : (
-          <div className="text-center py-8 text-gray-400 text-sm">Loading your checklist...</div>
+          <div className="text-center py-8 text-gray-500 text-sm">Loading your checklist...</div>
         )}
       </div>
 

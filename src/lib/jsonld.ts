@@ -1,5 +1,7 @@
 import type { ContentMeta } from "./mdx";
 import type { Product } from "./products";
+import { getAffiliateLink } from "./affiliateConfig";
+import { getSameAsUrls } from "./social";
 
 const SITE_URL = "https://toddlertravelgear.com";
 
@@ -59,7 +61,7 @@ export function generateItemListJsonLd(
       "@type": "ListItem",
       position: i + 1,
       name: product.name,
-      url: product.amazonUrl,
+      url: getAffiliateLink(product.id).url,
     })),
   };
 }
@@ -87,7 +89,7 @@ export function generateProductJsonLd(product: Product & { id: string }) {
       priceCurrency: "USD",
       ...(price ? { price } : {}),
       availability: "https://schema.org/InStock",
-      url: product.amazonUrl,
+      url: getAffiliateLink(product.id).url,
     },
   };
 }
@@ -115,6 +117,12 @@ export function generateReviewJsonLd(
         "@type": "Brand",
         name: product.brand,
       },
+    },
+    reviewRating: {
+      "@type": "Rating",
+      ratingValue: 4,
+      bestRating: 5,
+      worstRating: 1,
     },
     mainEntityOfPage: {
       "@type": "WebPage",
@@ -162,7 +170,7 @@ export function generateOrganizationJsonLd() {
     logo: `${SITE_URL}/icon.svg`,
     description:
       "Honest, safety-first gear recommendations for parents traveling with babies and toddlers.",
-    sameAs: [],
+    sameAs: getSameAsUrls(),
   };
 }
 

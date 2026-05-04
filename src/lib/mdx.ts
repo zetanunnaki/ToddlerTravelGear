@@ -116,16 +116,25 @@ export function getContentBySlug(
 
 export function getRelatedContent(
   current: ContentMeta,
-  limit = 4
+  limit = 3
 ): ContentMeta[] {
   const all = getAllContent();
+  const currentTags = current.tags ?? [];
+
   return all
-    .filter(
-      (item) =>
-        item.meta.slug !== current.slug &&
-        (item.meta.category === current.category ||
-          item.meta.tags?.some((t) => current.tags?.includes(t)))
-    )
+    .filter((item) => item.meta.slug !== current.slug)
+    .map((item) => {
+      let score = 0;
+      if (item.meta.category === current.category) score += 3;
+      const itemTags = item.meta.tags ?? [];
+      for (const t of itemTags) {
+        if (currentTags.includes(t)) score += 2;
+      }
+      if (item.meta.type === current.type) score += 1;
+      return { meta: item.meta, score };
+    })
+    .filter((item) => item.score > 0)
+    .sort((a, b) => b.score - a.score)
     .slice(0, limit)
     .map((item) => item.meta);
 }

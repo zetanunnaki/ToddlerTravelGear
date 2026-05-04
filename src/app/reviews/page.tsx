@@ -1,8 +1,10 @@
-import Link from "next/link";
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { getAllReviews } from "@/lib/mdx";
+import { getProduct } from "@/lib/products";
 import { JsonLd } from "@/components/JsonLd";
 import { generateCollectionPageJsonLd } from "@/lib/jsonld";
+import { ReviewFilters } from "@/components/ReviewFilters";
 
 export const metadata: Metadata = {
   title: "Product Reviews",
@@ -13,6 +15,24 @@ export const metadata: Metadata = {
 
 export default function ReviewsPage() {
   const reviews = getAllReviews();
+
+  const reviewItems = reviews.map((r) => {
+    const productId = r.meta.productIds?.[0];
+    const product = productId ? getProduct(productId) : null;
+    return {
+      slug: r.meta.slug,
+      title: r.meta.title,
+      description: r.meta.description,
+      category: r.meta.category,
+      featuredImage: r.meta.featuredImage,
+      readingTime: r.meta.readingTime,
+      priceHint: product?.priceHint ?? "",
+    };
+  });
+
+  const categories = [
+    ...new Set(reviews.map((r) => r.meta.category)),
+  ].sort();
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
@@ -43,37 +63,9 @@ export default function ReviewsPage() {
         </p>
       </div>
 
-      {reviews.length > 0 ? (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {reviews.map((item) => (
-            <Link
-              key={item.meta.slug}
-              href={`/reviews/${item.meta.slug}`}
-              className="group block border border-gray-100 rounded-2xl p-6 hover:shadow-xl hover:-translate-y-1 hover:border-teal-100 transition-all duration-300 bg-white"
-            >
-              <div className="flex items-center gap-2 mb-3">
-                <span className="inline-block text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full">
-                  {item.meta.category}
-                </span>
-                <span className="text-xs text-gray-400">
-                  {item.meta.readingTime}
-                </span>
-              </div>
-              <h2 className="font-display font-bold text-navy-900 mb-2 group-hover:text-teal-700 transition-colors leading-snug">
-                {item.meta.title}
-              </h2>
-              <p className="text-sm text-gray-500 mb-3 line-clamp-2">
-                {item.meta.description}
-              </p>
-              <span className="text-xs text-teal-600 font-semibold uppercase tracking-wide">
-                Read Review &rarr;
-              </span>
-            </Link>
-          ))}
-        </div>
-      ) : (
-        <p className="text-gray-400">Reviews are coming soon.</p>
-      )}
+      <Suspense fallback={null}>
+        <ReviewFilters reviews={reviewItems} categories={categories} />
+      </Suspense>
     </div>
   );
 }

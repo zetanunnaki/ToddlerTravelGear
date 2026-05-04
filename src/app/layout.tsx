@@ -3,6 +3,10 @@ import { Inter } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Analytics } from "@/components/Analytics";
+import { CookieConsent } from "@/components/CookieConsent";
+import { CompareProvider } from "@/components/CompareContext";
+import { CompareBar } from "@/components/CompareBar";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
 
 const inter = Inter({
@@ -45,6 +49,10 @@ export const metadata: Metadata = {
     description:
       "Thoroughly researched gear reviews, FAA-approved car seat guides, and packing lists for parents traveling with babies & toddlers.",
   },
+  icons: {
+    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+    apple: [{ url: "/apple-icon", sizes: "180x180", type: "image/png" }],
+  },
   robots: {
     index: true,
     follow: true,
@@ -64,12 +72,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col font-sans">
-        <Analytics />
-        <Header />
-        <main id="main-content" className="flex-1">{children}</main>
-        <Footer />
+    <html lang="en" className={`${inter.variable} h-full antialiased`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: `
+          (function(){try{var t=localStorage.getItem('theme');var d=t==='dark'||(t!=='light'&&matchMedia('(prefers-color-scheme:dark)').matches);if(d)document.documentElement.classList.add('dark')}catch(e){}})();
+        `}} />
+      </head>
+      <body className="min-h-full flex flex-col font-sans bg-white dark:bg-navy-900 text-gray-900 dark:text-gray-200">
+        <ThemeProvider>
+          <Analytics />
+          <CompareProvider>
+            <Header />
+            <main id="main-content" className="flex-1">{children}</main>
+            <Footer />
+            <CompareBar />
+          </CompareProvider>
+          <CookieConsent />
+        </ThemeProvider>
       </body>
     </html>
   );

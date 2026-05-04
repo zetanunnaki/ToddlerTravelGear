@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { getActiveSocialLinks } from "@/lib/social";
 
 export default function Footer() {
+  const socialLinks = getActiveSocialLinks();
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -85,9 +87,33 @@ export default function Footer() {
                   Privacy Policy
                 </Link>
               </li>
+              <li>
+                <Link href="/terms" className="text-gray-400 hover:text-teal-400 transition-colors">
+                  Terms of Service
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
+
+        {socialLinks.length > 0 && (
+          <div className="mt-8 flex items-center gap-4">
+            {socialLinks.map((link) => (
+              <a
+                key={link.platform}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={link.label}
+                className="text-gray-500 hover:text-teal-400 transition-colors"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d={link.icon} />
+                </svg>
+              </a>
+            ))}
+          </div>
+        )}
 
         <div className="mt-10 pt-8 border-t border-gray-800">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -98,7 +124,7 @@ export default function Footer() {
                   Learn more
                 </Link>
               </p>
-              <p className="text-xs text-gray-600 mt-2">&copy; {new Date().getFullYear()} ToddlerTravelGear.com. All rights reserved.</p>
+              <p className="text-xs text-gray-500 mt-2">&copy; {new Date().getFullYear()} ToddlerTravelGear.com. All rights reserved.</p>
             </div>
             <button
               onClick={scrollToTop}

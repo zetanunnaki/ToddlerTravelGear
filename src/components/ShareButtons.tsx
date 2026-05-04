@@ -64,7 +64,7 @@ export function ShareButtons({ title, url }: ShareButtonsProps) {
           target="_blank"
           rel="noopener noreferrer"
           aria-label={`Share on ${link.label}`}
-          className={`text-gray-400 border border-transparent p-2 rounded-lg transition-all ${link.color}`}
+          className={`text-gray-500 border border-transparent p-2 rounded-lg transition-all ${link.color}`}
         >
           {link.icon}
         </a>

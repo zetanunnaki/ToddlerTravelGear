@@ -87,7 +87,7 @@ export default function GuidesPage() {
                   {item.meta.description}
                 </p>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-gray-400">
+                  <span className="text-xs text-gray-500">
                     {item.meta.readingTime}
                   </span>
                   <span className="text-xs text-teal-600 font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
@@ -99,7 +99,7 @@ export default function GuidesPage() {
           ))}
         </div>
       ) : (
-        <p className="text-gray-400">Guides are coming soon.</p>
+        <p className="text-gray-500">Guides are coming soon.</p>
       )}
     </div>
   );

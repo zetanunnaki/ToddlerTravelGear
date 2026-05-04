@@ -74,7 +74,7 @@ export default function BestPage() {
                   {item.meta.description}
                 </p>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-gray-400">
+                  <span className="text-xs text-gray-500">
                     {item.meta.readingTime} &middot; Updated{" "}
                     {item.meta.updatedAt}
                   </span>
@@ -87,7 +87,7 @@ export default function BestPage() {
           ))}
         </div>
       ) : (
-        <p className="text-gray-400">Roundups are coming soon.</p>
+        <p className="text-gray-500">Roundups are coming soon.</p>
       )}
     </div>
   );

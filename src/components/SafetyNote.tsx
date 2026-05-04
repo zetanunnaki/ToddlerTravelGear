@@ -8,9 +8,9 @@ export function SafetyNote({
   title = "Safety Note",
 }: SafetyNoteProps) {
   return (
-    <div className="bg-amber-50 border-l-4 border-amber-400 rounded-r-xl p-5 my-6">
+    <aside role="note" aria-label={title} className="bg-amber-50 border-l-4 border-amber-400 rounded-r-xl p-5 my-6">
       <div className="flex items-start gap-3">
-        <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0">
+        <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0" aria-hidden="true">
           <svg
             className="w-5 h-5 text-amber-600"
             fill="currentColor"
@@ -30,6 +30,6 @@ export function SafetyNote({
           </div>
         </div>
       </div>
-    </div>
+    </aside>
   );
 }

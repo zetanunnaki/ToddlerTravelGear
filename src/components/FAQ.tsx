@@ -28,35 +28,44 @@ export function FAQ({ items = [] }: FAQProps) {
       <div className="divide-y divide-gray-100 border border-gray-200 rounded-2xl overflow-hidden">
         {items.map((item, i) => (
           <div key={i} className={open === i ? "bg-gray-50" : ""}>
-            <button
-              onClick={() => setOpen(open === i ? null : i)}
-              className="w-full text-left px-5 sm:px-6 py-4 flex items-center justify-between gap-3 sm:gap-4 hover:bg-gray-50 transition-colors min-h-[48px]"
-              aria-expanded={open === i}
-            >
-              <span className="font-semibold text-gray-900 text-sm">
-                {item.question}
-              </span>
-              <svg
-                className={`w-5 h-5 text-gray-400 flex-shrink-0 transition-transform duration-200 ${
-                  open === i ? "rotate-180" : ""
-                }`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+            <h3>
+              <button
+                id={`faq-question-${i}`}
+                onClick={() => setOpen(open === i ? null : i)}
+                className="w-full text-left px-5 sm:px-6 py-4 flex items-center justify-between gap-3 sm:gap-4 hover:bg-gray-50 transition-colors min-h-[48px]"
+                aria-expanded={open === i}
+                aria-controls={`faq-answer-${i}`}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </button>
-            {open === i && (
-              <div className="px-5 sm:px-6 pb-5 text-sm text-gray-600 leading-relaxed">
-                {item.answer}
-              </div>
-            )}
+                <span className="font-semibold text-gray-900 text-sm">
+                  {item.question}
+                </span>
+                <svg
+                  className={`w-5 h-5 text-gray-500 flex-shrink-0 transition-transform duration-200 ${
+                    open === i ? "rotate-180" : ""
+                  }`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
+            </h3>
+            <div
+              id={`faq-answer-${i}`}
+              role="region"
+              aria-labelledby={`faq-question-${i}`}
+              hidden={open !== i}
+              className={open === i ? "px-5 sm:px-6 pb-5 text-sm text-gray-600 leading-relaxed" : ""}
+            >
+              {open === i && item.answer}
+            </div>
           </div>
         ))}
       </div>
