@@ -4450,13 +4450,13 @@
       "Check LATCH weight limits for your vehicle"
     ]
   },
-  "babyzen-yoyo2": {
-    "name": "BABYZEN YOYO2 Stroller, Lightweight & Compact Travel Stroller",
-    "brand": "BABYZEN",
+  "stokke-yoyo3": {
+    "name": "Stokke YOYO3 Stroller, Lightweight & Compact Travel Stroller",
+    "brand": "Stokke",
     "category": "Travel Strollers",
-    "priceHint": "$549.00",
-    "image": "/images/products/babyzen-yoyo2.jpg",
-    "amazonUrl": "https://www.amazon.com/dp/B0BBHGMFQ4?linkCode=ll2&tag=toddlertravelgear.com-20",
+    "priceHint": "$499.00",
+    "image": "/images/products/stokke-yoyo3.jpg",
+    "amazonUrl": "https://www.amazon.com/dp/B0D8JVY9CD?linkCode=ll2&tag=toddlertravelgear.com-20",
     "keySpecs": {
       "weight": "13.6 lbs",
       "fold": "One-hand compact fold, fits overhead bin",
@@ -4475,7 +4475,7 @@
       "Premium build quality that lasts"
     ],
     "cons": [
-      "Premium price at $549",
+      "Premium price at $499",
       "Small underseat basket",
       "Canopy could be larger",
       "Seat is narrower than full-size strollers"
