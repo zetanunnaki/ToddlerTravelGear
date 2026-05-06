@@ -4632,5 +4632,40 @@
       "Keep cord away from neck during sleep",
       "Charge before flights to ensure Bluetooth is ready"
     ]
+  },
+  "travelon-mesh-pouches": {
+    "name": "Travelon Set of 4 Mesh Pouches, Assorted Sizes",
+    "brand": "Travelon",
+    "category": "Packing & Organization",
+    "priceHint": "$9.34",
+    "image": "/images/products/travelon-mesh-pouches.jpg",
+    "amazonUrl": "https://www.amazon.com/dp/B004MMEHMK?linkCode=ll2&tag=toddlertravelgear.com-20",
+    "keySpecs": {
+      "count": "Set of 4 pouches",
+      "type": "Mesh zippered pouches",
+      "sizes": "Assorted sizes (S, M, L, XL)",
+      "material": "Lightweight mesh with zipper closure"
+    },
+    "bestFor": [
+      "organizing small toddler items",
+      "see-through packing",
+      "diaper bag organization"
+    ],
+    "pros": [
+      "Under $10 for four pouches",
+      "See-through mesh for easy finding",
+      "Four sizes fit different gear",
+      "Lightweight and packable"
+    ],
+    "cons": [
+      "Mesh can snag on sharp items",
+      "Zippers are basic quality",
+      "No padding or structure"
+    ],
+    "safetyNotes": [
+      "Keep small pouches away from young children",
+      "Check zipper pulls are secure",
+      "Not a toy"
+    ]
   }
 }
