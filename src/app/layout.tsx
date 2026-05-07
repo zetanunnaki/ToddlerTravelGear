@@ -50,9 +50,14 @@ export const metadata: Metadata = {
       "Thoroughly researched gear reviews, FAA-approved car seat guides, and packing lists for parents traveling with babies & toddlers.",
   },
   icons: {
-    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+    icon: [
+      { url: "/favicon.ico", sizes: "32x32" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/icon-192.png", type: "image/png", sizes: "192x192" },
+    ],
     apple: [{ url: "/apple-icon", sizes: "180x180", type: "image/png" }],
   },
+  manifest: "/manifest.webmanifest",
   robots: {
     index: true,
     follow: true,
