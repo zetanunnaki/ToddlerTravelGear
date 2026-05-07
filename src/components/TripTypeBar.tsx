@@ -1,0 +1,36 @@
+"use client";
+
+import { useTripType } from "@/components/PackingListProvider";
+import { TRIP_TYPES, type TripType } from "@/data/trip-type-items";
+
+const OPTIONS: { value: TripType; label: string; icon: string }[] = [
+  { value: "all", label: "All Items", icon: "\u{1F4CB}" },
+  ...Object.entries(TRIP_TYPES).map(([key, config]) => ({
+    value: key as TripType,
+    label: config.label,
+    icon: config.icon,
+  })),
+];
+
+export function TripTypeBar() {
+  const { tripType, setTripType } = useTripType();
+
+  return (
+    <div className="flex gap-2 overflow-x-auto pb-2 mb-6 -mx-1 px-1 scrollbar-hide">
+      {OPTIONS.map((opt) => (
+        <button
+          key={opt.value}
+          onClick={() => setTripType(opt.value)}
+          className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap border-2 transition-colors ${
+            tripType === opt.value
+              ? "bg-teal-600 text-white border-teal-600"
+              : "bg-white text-gray-600 border-gray-200 hover:border-teal-400 hover:text-teal-700"
+          }`}
+        >
+          <span>{opt.icon}</span>
+          {opt.label}
+        </button>
+      ))}
+    </div>
+  );
+}
