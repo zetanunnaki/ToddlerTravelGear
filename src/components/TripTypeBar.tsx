@@ -16,12 +16,12 @@ export function TripTypeBar() {
   const { tripType, setTripType } = usePackingList();
 
   return (
-    <div className="flex gap-2 overflow-x-auto pb-2 mb-6 -mx-1 px-1 scrollbar-hide">
+    <div className="grid grid-cols-3 gap-2 mb-6">
       {OPTIONS.map((opt) => (
         <button
           key={opt.value}
           onClick={() => setTripType(opt.value)}
-          className={`flex items-center gap-1.5 px-4 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap border-2 transition-colors min-h-[44px] ${
+          className={`flex items-center justify-center gap-1.5 px-2 py-2.5 rounded-xl text-sm font-semibold border-2 transition-colors min-h-[44px] ${
             tripType === opt.value
               ? "bg-teal-600 text-white border-teal-600"
               : "bg-white text-gray-600 border-gray-200 hover:border-teal-400 hover:text-teal-700"
