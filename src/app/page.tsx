@@ -20,7 +20,7 @@ export default function HomePage() {
           <div className="grid md:grid-cols-2 gap-10 md:gap-12 items-center">
             <div>
               <p className="text-sm font-semibold text-teal-700 tracking-wide uppercase mb-4">
-                Trusted by traveling parents since 2026
+                Trusted by traveling parents since 2024
               </p>
               <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold leading-[1.1] mb-6">
                 <span className="text-navy-900 dark:text-white">Travel Lighter.</span>

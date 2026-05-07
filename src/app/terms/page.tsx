@@ -201,9 +201,9 @@ export default function TermsPage() {
         <h2>11. Governing Law</h2>
         <p>
           These Terms shall be governed by and construed in accordance with the
-          laws of [YOUR STATE/COUNTRY], without regard to its conflict of law
+          laws of the State of Delaware, United States, without regard to its conflict of law
           provisions. Any disputes arising under these Terms shall be resolved in
-          the courts of [YOUR STATE/COUNTRY].
+          the courts of the State of Delaware, United States.
         </p>
 
         <h2>12. Contact</h2>

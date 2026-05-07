@@ -60,7 +60,7 @@ export function BuyBox({ productId }: BuyBoxProps) {
       </AffiliateLink>
 
       <p className="text-xs text-gray-500 mt-2 text-center">
-        Price as of last check: {product.priceHint}
+        Prices are accurate as of the date/time indicated and are subject to change. As an Amazon Associate we earn from qualifying purchases.
       </p>
     </div>
   );

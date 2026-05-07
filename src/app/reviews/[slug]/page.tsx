@@ -14,6 +14,7 @@ import { RelatedContent } from "@/components/RelatedContent";
 import { MentionedProducts } from "@/components/MentionedProducts";
 import { ShareButtons } from "@/components/ShareButtons";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { AffiliateDisclaimer } from "@/components/AffiliateDisclaimer";
 import { JsonLd } from "@/components/JsonLd";
 import {
   generateBreadcrumbJsonLd,
@@ -93,6 +94,8 @@ export default async function ReviewPage({ params }: Props) {
         )}
 
         <Breadcrumbs items={breadcrumbItems} />
+
+        <AffiliateDisclaimer />
 
         <header className="mb-10">
           <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full uppercase tracking-wide">

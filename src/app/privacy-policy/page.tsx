@@ -35,10 +35,27 @@ export default function PrivacyPolicyPage() {
         </p>
         <h2>Cookies</h2>
         <p>
-          This site uses cookies for analytics and to support affiliate tracking.
-          Third-party services (Google Analytics, Amazon Associates) may set
-          their own cookies. You can manage cookie preferences through your
-          browser settings.
+          This site uses cookies for analytics, advertising, and to support
+          affiliate tracking. Third-party services (Google Analytics, Google
+          AdSense, Amazon Associates) may set their own cookies to serve
+          personalized ads and track conversions. You can manage cookie
+          preferences through your browser settings.
+        </p>
+        <h2>Advertising</h2>
+        <p>
+          We use Google AdSense to display advertisements on this site.
+          Google&apos;s use of advertising cookies enables it and its partners to
+          serve ads based on your visit to this site and/or other sites on the
+          Internet. You may opt out of personalized advertising by visiting{" "}
+          <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer">
+            Google Ads Settings
+          </a>
+          . For more information about how Google uses data when you use our
+          site, visit{" "}
+          <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener noreferrer">
+            Google&apos;s Privacy &amp; Terms
+          </a>
+          .
         </p>
         <h2>Affiliate links</h2>
         <p>
@@ -51,6 +68,11 @@ export default function PrivacyPolicyPage() {
           <li>
             <strong>Google Analytics:</strong> Used for website traffic analysis.
             See Google&apos;s privacy policy for details.
+          </li>
+          <li>
+            <strong>Google AdSense:</strong> Used to serve relevant
+            advertisements. Google may use cookies to personalize ads. See
+            Google&apos;s advertising privacy policy for details.
           </li>
           <li>
             <strong>Amazon Associates:</strong> Used for affiliate tracking. See

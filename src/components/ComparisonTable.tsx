@@ -119,6 +119,10 @@ export function ComparisonTable({
           </tbody>
         </table>
       </div>
+
+      <p className="text-xs text-gray-400 mt-2 px-1">
+        Prices are accurate as of the date/time indicated and are subject to change. As an Amazon Associate we earn from qualifying purchases.
+      </p>
     </>
   );
 }

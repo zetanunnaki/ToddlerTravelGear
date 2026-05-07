@@ -41,12 +41,13 @@ export function ProductCard({ productId, badge, reason }: ProductCardProps) {
               </span>
             )}
           </div>
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center justify-between mb-1">
             <p className="text-sm text-gray-500">
               {product.brand} &middot; {product.priceHint}
             </p>
             <CompareCheckbox product={{ ...product, id: productId }} />
           </div>
+          <p className="text-xs text-gray-400 mb-2">Price may vary</p>
 
           {reason && (
             <p className="text-sm text-teal-700 font-medium mb-3 bg-teal-50 px-3 py-1.5 rounded-lg inline-block">{reason}</p>
