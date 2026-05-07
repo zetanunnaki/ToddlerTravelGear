@@ -6,7 +6,7 @@ import { usePackingList } from "@/components/PackingListProvider";
 import { TRIP_TYPES, type TripType } from "@/data/trip-type-items";
 
 interface AgeChecklistProps {
-  ageRange: string;
+  ageRange?: string;
   items?: string[];
 }
 
@@ -75,43 +75,47 @@ function getSectionId(ageRange: string) {
   return `checklist-${ageRange.replace(/[^a-zA-Z0-9]+/g, "-").toLowerCase()}`;
 }
 
-
 export function AgeChecklist({ ageRange: ageRangeProp, items }: AgeChecklistProps) {
   const { tripType, ageRange: ageRangeCtx } = usePackingList();
   const ageRange = ageRangeProp || ageRangeCtx;
 
-  // Base items from props or data file
   const baseItems = items && items.length > 0 ? items : PACKING_LIST_ITEMS[ageRange] ?? [];
 
-  // Trip extras: items added by the active trip type
   const tripExtras: string[] =
     tripType !== "all" && TRIP_TYPES[tripType]?.add[ageRange]
       ? TRIP_TYPES[tripType].add[ageRange]!
       : [];
   const tripExtraStartIndex = baseItems.length;
 
-  // Custom items state
   const [customItems, setCustomItems] = useState<string[]>([]);
   const [newItemText, setNewItemText] = useState("");
   const customStartIndex = baseItems.length + tripExtras.length;
 
-  // Combined resolved items
   const resolvedItems = [...baseItems, ...tripExtras, ...customItems];
 
   const [checked, setChecked] = useState<Set<number>>(new Set());
   const [loaded, setLoaded] = useState(false);
   const [showByCategory, setShowByCategory] = useState(true);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
 
-  // Load checked state and custom items from localStorage
   useEffect(() => {
     try {
       const saved = localStorage.getItem(getStorageKey(ageRange));
-      if (saved) setChecked(new Set(JSON.parse(saved)));
-    } catch {}
+      if (saved) {
+        setChecked(new Set(JSON.parse(saved)));
+      } else {
+        setChecked(new Set());
+      }
+    } catch {
+      setChecked(new Set());
+    }
     try {
       const savedCustom = localStorage.getItem(getCustomItemsKey(ageRange));
       if (savedCustom) setCustomItems(JSON.parse(savedCustom));
-    } catch {}
+      else setCustomItems([]);
+    } catch {
+      setCustomItems([]);
+    }
     setLoaded(true);
   }, [ageRange]);
 
@@ -143,12 +147,7 @@ export function AgeChecklist({ ageRange: ageRangeProp, items }: AgeChecklistProp
     const empty = new Set<number>();
     setChecked(empty);
     persist(empty);
-  };
-
-  const checkAll = () => {
-    const all = new Set(resolvedItems.map((_, i) => i));
-    setChecked(all);
-    persist(all);
+    setShowResetConfirm(false);
   };
 
   const addCustomItem = () => {
@@ -164,7 +163,6 @@ export function AgeChecklist({ ageRange: ageRangeProp, items }: AgeChecklistProp
     const next = customItems.filter((_, i) => i !== customIndex);
     setCustomItems(next);
     persistCustomItems(next);
-    // Also remove the checked state for the removed item and shift higher indices
     setChecked((prev) => {
       const removedGlobalIndex = customStartIndex + customIndex;
       const updated = new Set<number>();
@@ -193,27 +191,41 @@ export function AgeChecklist({ ageRange: ageRangeProp, items }: AgeChecklistProp
     const isTripExtra = i >= tripExtraStartIndex && i < customStartIndex;
     const isCustom = i >= customStartIndex;
     const isDimmed = !isTripExtra && !isCustom && shouldDimItem(item, tripType);
+    const isChecked = checked.has(i);
 
     return (
       <li key={i} className="group list-none m-0 p-0">
         <label
-          className={`flex items-start gap-3 cursor-pointer py-2.5 sm:py-1.5 px-2 -mx-2 rounded-lg transition-colors ${
+          className={`flex items-start gap-3 cursor-pointer py-3 sm:py-2 px-3 -mx-1 rounded-lg transition-all duration-150 select-none ${
             isTripExtra
               ? "bg-teal-50 border-l-3 border-teal-400 ml-0 pl-3"
               : isCustom
               ? "border-l-2 border-dotted border-gray-300 ml-0 pl-3"
-              : "hover:bg-gray-50 active:bg-gray-100"
+              : isChecked
+              ? "bg-gray-50/50"
+              : "hover:bg-gray-50 active:bg-teal-50"
           } ${isDimmed ? "opacity-35" : ""}`}
         >
-          <input
-            type="checkbox"
-            checked={checked.has(i)}
-            onChange={() => toggle(i)}
-            className="w-5 h-5 mt-0.5 rounded border-gray-300 text-teal-600 focus:ring-teal-500 flex-shrink-0 print:w-4 print:h-4"
-          />
+          <span className={`relative flex-shrink-0 w-6 h-6 mt-0 rounded-md border-2 transition-all duration-200 flex items-center justify-center ${
+            isChecked
+              ? "bg-teal-600 border-teal-600 scale-100"
+              : "bg-white border-gray-300 hover:border-teal-400"
+          }`}>
+            <input
+              type="checkbox"
+              checked={isChecked}
+              onChange={() => toggle(i)}
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            />
+            {isChecked && (
+              <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+              </svg>
+            )}
+          </span>
           <span
-            className={`text-sm leading-relaxed transition-colors flex-1 ${
-              checked.has(i)
+            className={`text-sm leading-relaxed transition-all duration-200 flex-1 ${
+              isChecked
                 ? "line-through text-gray-400"
                 : isDimmed
                 ? "line-through text-gray-400"
@@ -234,7 +246,7 @@ export function AgeChecklist({ ageRange: ageRangeProp, items }: AgeChecklistProp
                 e.stopPropagation();
                 removeCustomItem(i - customStartIndex);
               }}
-              className="text-gray-400 hover:text-red-500 transition-colors sm:opacity-0 sm:group-hover:opacity-100 flex-shrink-0 print:hidden p-1 min-w-[28px] min-h-[28px] flex items-center justify-center"
+              className="text-gray-400 hover:text-red-500 active:text-red-600 transition-all duration-150 sm:opacity-0 sm:group-hover:opacity-100 flex-shrink-0 print:hidden p-1.5 -mr-1 min-w-[32px] min-h-[32px] rounded-full hover:bg-red-50 active:bg-red-100 flex items-center justify-center"
               aria-label={`Remove custom item: ${item}`}
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
@@ -249,7 +261,6 @@ export function AgeChecklist({ ageRange: ageRangeProp, items }: AgeChecklistProp
 
   const sectionId = getSectionId(ageRange);
 
-  // Subtitle info for trip mode
   const tripSubtitle =
     tripType !== "all" && tripExtras.length > 0
       ? `${TRIP_TYPES[tripType].icon} ${TRIP_TYPES[tripType].label} mode — ${tripExtras.length} added`
@@ -257,14 +268,13 @@ export function AgeChecklist({ ageRange: ageRangeProp, items }: AgeChecklistProp
       ? `${TRIP_TYPES[tripType].icon} ${TRIP_TYPES[tripType].label} mode`
       : null;
 
-
   return (
-    <div id={sectionId} className="not-prose border-2 border-teal-200 rounded-xl my-8 bg-white shadow-sm print:border print:border-gray-300 print:shadow-none">
+    <div id={sectionId} className="not-prose border-2 border-teal-200 rounded-2xl my-8 bg-white shadow-sm print:border print:border-gray-300 print:shadow-none overflow-hidden">
       {/* Header */}
-      <div className="bg-teal-50 px-4 sm:px-5 py-4 rounded-t-xl border-b border-teal-100 print:bg-white">
+      <div className="bg-gradient-to-b from-teal-50 to-white px-4 sm:px-5 py-4 border-b border-teal-100 print:bg-white">
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
-            <h3 className="text-base sm:text-lg font-bold text-gray-900 print:text-base truncate">
+            <h3 className="text-base sm:text-lg font-bold text-gray-900 print:text-base">
               {CATEGORY_ICONS["Gear & Transport"]} {ageRange}
             </h3>
             <p className="text-sm text-gray-500 mt-0.5">
@@ -274,12 +284,30 @@ export function AgeChecklist({ ageRange: ageRangeProp, items }: AgeChecklistProp
               )}
             </p>
           </div>
-          <button
-            onClick={clearAll}
-            className="text-xs font-medium text-gray-500 bg-white border border-gray-200 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors flex-shrink-0 min-h-[36px] print:hidden"
-          >
-            Reset
-          </button>
+          {showResetConfirm ? (
+            <div className="flex items-center gap-1.5 flex-shrink-0 print:hidden">
+              <button
+                onClick={clearAll}
+                className="text-xs font-semibold text-white bg-red-500 px-3 py-2 rounded-lg hover:bg-red-600 active:scale-[0.96] transition-all duration-150 min-h-[36px]"
+              >
+                Confirm
+              </button>
+              <button
+                onClick={() => setShowResetConfirm(false)}
+                className="text-xs font-medium text-gray-500 bg-white border border-gray-200 px-3 py-2 rounded-lg hover:bg-gray-50 active:scale-[0.96] transition-all duration-150 min-h-[36px]"
+              >
+                Cancel
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => checked.size > 0 ? setShowResetConfirm(true) : undefined}
+              disabled={checked.size === 0}
+              className="text-xs font-medium text-gray-500 bg-white border border-gray-200 px-3 py-2 rounded-lg hover:bg-gray-50 active:scale-[0.96] transition-all duration-150 flex-shrink-0 min-h-[36px] disabled:opacity-30 disabled:cursor-not-allowed print:hidden"
+            >
+              Reset
+            </button>
+          )}
         </div>
 
         {/* Progress bar */}
@@ -300,8 +328,8 @@ export function AgeChecklist({ ageRange: ageRangeProp, items }: AgeChecklistProp
             />
           </div>
           {progress === 100 && (
-            <p className="text-sm font-semibold text-emerald-600 mt-2 text-center">
-              All packed! You are ready to go!
+            <p className="text-sm font-semibold text-emerald-600 mt-2 text-center animate-pulse">
+              🎉 All packed! You are ready to go!
             </p>
           )}
         </div>
@@ -310,9 +338,9 @@ export function AgeChecklist({ ageRange: ageRangeProp, items }: AgeChecklistProp
         <div className="flex gap-2 mt-3 print:hidden">
           <button
             onClick={() => setShowByCategory(true)}
-            className={`text-sm px-4 py-2 rounded-full transition-colors min-h-[40px] ${
+            className={`text-sm px-4 py-2 rounded-full transition-all duration-200 min-h-[40px] active:scale-[0.96] ${
               showByCategory
-                ? "bg-teal-600 text-white"
+                ? "bg-teal-600 text-white shadow-sm"
                 : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
             }`}
           >
@@ -320,9 +348,9 @@ export function AgeChecklist({ ageRange: ageRangeProp, items }: AgeChecklistProp
           </button>
           <button
             onClick={() => setShowByCategory(false)}
-            className={`text-sm px-4 py-2 rounded-full transition-colors min-h-[40px] ${
+            className={`text-sm px-4 py-2 rounded-full transition-all duration-200 min-h-[40px] active:scale-[0.96] ${
               !showByCategory
-                ? "bg-teal-600 text-white"
+                ? "bg-teal-600 text-white shadow-sm"
                 : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
             }`}
           >
@@ -339,21 +367,23 @@ export function AgeChecklist({ ageRange: ageRangeProp, items }: AgeChecklistProp
               {categoryOrder.map(cat => {
                 const catItems = categorized[cat];
                 const catChecked = catItems.filter(ci => checked.has(ci.index)).length;
+                const catDone = catChecked === catItems.length;
                 return (
                   <div key={cat}>
                     <div className="flex items-center justify-between mb-2">
-                      <h4 className="text-sm font-semibold text-gray-800 print:text-xs">
+                      <h4 className={`text-sm font-semibold print:text-xs transition-colors duration-200 ${catDone ? "text-emerald-600" : "text-gray-800"}`}>
                         {CATEGORY_ICONS[cat] || ""} {cat}
+                        {catDone && " ✓"}
                       </h4>
-                      <span className={`text-xs font-medium px-2 py-0.5 rounded-full print:hidden ${
-                        catChecked === catItems.length
+                      <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full print:hidden transition-all duration-300 ${
+                        catDone
                           ? "bg-emerald-100 text-emerald-700"
                           : "bg-gray-100 text-gray-500"
                       }`}>
                         {catChecked}/{catItems.length}
                       </span>
                     </div>
-                    <ul className="list-none p-0 m-0 space-y-0.5 print:space-y-0">
+                    <ul className="list-none p-0 m-0 space-y-0 print:space-y-0">
                       {catItems.map(ci => renderItem(ci.item, ci.index))}
                     </ul>
                   </div>
@@ -361,12 +391,12 @@ export function AgeChecklist({ ageRange: ageRangeProp, items }: AgeChecklistProp
               })}
             </div>
           ) : (
-            <ul className="list-none p-0 m-0 space-y-0.5 print:space-y-0">
+            <ul className="list-none p-0 m-0 space-y-0 print:space-y-0">
               {resolvedItems.map((item, i) => renderItem(item, i))}
             </ul>
           )
         ) : (
-          <div className="text-center py-8 text-gray-500 text-sm">Loading your checklist...</div>
+          <div className="text-center py-12 text-gray-400 text-sm">Loading your checklist...</div>
         )}
       </div>
 
@@ -384,21 +414,21 @@ export function AgeChecklist({ ageRange: ageRangeProp, items }: AgeChecklistProp
               }
             }}
             placeholder="Add your own item..."
-            className="flex-1 text-base sm:text-sm border border-gray-200 rounded-lg px-3 py-3 sm:py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent placeholder-gray-400"
+            className="flex-1 text-base sm:text-sm border-2 border-gray-200 rounded-xl px-3 py-3 sm:py-2.5 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-400 placeholder-gray-400 transition-all duration-200"
           />
           <button
             onClick={addCustomItem}
             disabled={!newItemText.trim()}
-            className="text-sm font-medium text-white bg-teal-600 px-5 py-3 sm:py-2 rounded-lg hover:bg-teal-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed min-h-[48px] sm:min-h-0"
+            className="text-sm font-semibold text-white bg-teal-600 px-5 py-3 sm:py-2.5 rounded-xl hover:bg-teal-700 active:scale-[0.96] transition-all duration-150 disabled:opacity-30 disabled:cursor-not-allowed min-h-[48px] sm:min-h-0"
           >
-            Add
+            + Add
           </button>
         </div>
       </div>
 
       {/* Footer */}
-      <div className="bg-gray-50 px-4 sm:px-5 py-3 rounded-b-xl border-t border-gray-100 print:hidden">
-        <p className="text-xs text-gray-500 text-center">
+      <div className="bg-gray-50 px-4 sm:px-5 py-3 border-t border-gray-100 print:hidden">
+        <p className="text-xs text-gray-400 text-center">
           Your progress saves automatically on this device.
         </p>
       </div>
