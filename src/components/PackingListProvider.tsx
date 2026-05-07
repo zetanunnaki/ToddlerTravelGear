@@ -27,6 +27,20 @@ function ageSlug(ageRange: string) {
   return `${ageRange.replace(/\s+/g, "-").toLowerCase()}`;
 }
 
+function toBase64(str: string): string {
+  const bytes = new TextEncoder().encode(str);
+  let binary = "";
+  bytes.forEach(b => binary += String.fromCharCode(b));
+  return btoa(binary);
+}
+
+function fromBase64(encoded: string): string {
+  const binary = atob(encoded);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
+}
+
 export function encodeShareState(ageRange: string, tripType: string): string {
   const ageIdx = AGE_RANGES.indexOf(ageRange as AgeRange);
   let checked: number[] = [];
@@ -38,12 +52,12 @@ export function encodeShareState(ageRange: string, tripType: string): string {
     if (sx) custom = JSON.parse(sx);
   } catch {}
   const json = JSON.stringify({ a: ageIdx, t: tripType, c: checked, x: custom });
-  return btoa(encodeURIComponent(json));
+  return toBase64(json);
 }
 
 function decodeShareState(encoded: string) {
   try {
-    const json = decodeURIComponent(atob(encoded));
+    const json = fromBase64(encoded);
     const data = JSON.parse(json);
     const age = AGE_RANGES[data.a] ?? AGE_RANGES[0];
     const slug = ageSlug(age);
