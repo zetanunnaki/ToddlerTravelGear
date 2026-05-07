@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { PACKING_LIST_ITEMS } from "@/data/packing-list-items";
 import { usePackingList } from "@/components/PackingListProvider";
 import { TRIP_TYPES, type TripType } from "@/data/trip-type-items";
@@ -75,24 +75,6 @@ function getSectionId(ageRange: string) {
   return `checklist-${ageRange.replace(/[^a-zA-Z0-9]+/g, "-").toLowerCase()}`;
 }
 
-function printSection(el: HTMLElement, ageRange: string) {
-  const printWindow = window.open("", "_blank");
-  if (!printWindow) return;
-
-  const styles = Array.from(document.querySelectorAll('link[rel="stylesheet"], style'))
-    .map(s => s.outerHTML)
-    .join("\n");
-
-  printWindow.document.write(`<!DOCTYPE html><html><head><title>Packing Checklist: ${ageRange}</title>${styles}
-    <style>body{padding:24px}@media print{.print\\:hidden{display:none!important}}</style>
-    </head><body>${el.outerHTML}</body></html>`);
-  printWindow.document.close();
-  printWindow.onload = () => {
-    printWindow.focus();
-    printWindow.print();
-    printWindow.close();
-  };
-}
 
 export function AgeChecklist({ ageRange: ageRangeProp, items }: AgeChecklistProps) {
   const { tripType, ageRange: ageRangeCtx } = usePackingList();
@@ -116,7 +98,6 @@ export function AgeChecklist({ ageRange: ageRangeProp, items }: AgeChecklistProp
   // Combined resolved items
   const resolvedItems = [...baseItems, ...tripExtras, ...customItems];
 
-  const sectionRef = useRef<HTMLDivElement>(null);
   const [checked, setChecked] = useState<Set<number>>(new Set());
   const [loaded, setLoaded] = useState(false);
   const [showByCategory, setShowByCategory] = useState(true);
@@ -276,28 +257,9 @@ export function AgeChecklist({ ageRange: ageRangeProp, items }: AgeChecklistProp
       ? `${TRIP_TYPES[tripType].icon} ${TRIP_TYPES[tripType].label} mode`
       : null;
 
-  const handleShare = async () => {
-    const url = `${window.location.origin}${window.location.pathname}#${sectionId}`;
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: `Packing Checklist: ${ageRange}`,
-          text: `Interactive packing checklist for ${ageRange} — check items off and your progress saves automatically.`,
-          url,
-        });
-      } catch {}
-    } else {
-      await navigator.clipboard.writeText(url);
-      alert("Link copied! Save it as a bookmark for quick access on your phone.");
-    }
-  };
-
-  const handlePrint = () => {
-    if (sectionRef.current) printSection(sectionRef.current, ageRange);
-  };
 
   return (
-    <div id={sectionId} ref={sectionRef} className="border-2 border-teal-200 rounded-xl my-8 bg-white shadow-sm print:border print:border-gray-300 print:shadow-none">
+    <div id={sectionId} className="border-2 border-teal-200 rounded-xl my-8 bg-white shadow-sm print:border print:border-gray-300 print:shadow-none">
       {/* Header */}
       <div className="bg-teal-50 px-5 py-4 rounded-t-xl border-b border-teal-100 print:bg-white">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -313,18 +275,6 @@ export function AgeChecklist({ ageRange: ageRangeProp, items }: AgeChecklistProp
             </p>
           </div>
           <div className="flex items-center gap-2 print:hidden">
-            <button
-              onClick={handleShare}
-              className="text-xs font-medium text-white bg-teal-600 px-3 py-1.5 rounded-lg hover:bg-teal-700 transition-colors"
-            >
-              Save / Share
-            </button>
-            <button
-              onClick={handlePrint}
-              className="text-xs font-medium text-teal-700 bg-white border border-teal-200 px-3 py-1.5 rounded-lg hover:bg-teal-50 transition-colors"
-            >
-              Print
-            </button>
             <button
               onClick={clearAll}
               className="text-xs font-medium text-gray-500 bg-white border border-gray-200 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors"
@@ -448,11 +398,10 @@ export function AgeChecklist({ ageRange: ageRangeProp, items }: AgeChecklistProp
         </div>
       </div>
 
-      {/* Footer — save hint */}
+      {/* Footer */}
       <div className="bg-gray-50 px-5 py-3 rounded-b-xl border-t border-gray-100 print:hidden">
         <p className="text-xs text-gray-500 text-center">
-          Your progress saves automatically on this device. Tap <strong>Save / Share</strong> to send this checklist to yourself or a travel partner.
-          On iPhone: tap Share then "Add to Home Screen" for instant access like an app.
+          Your progress saves automatically on this device. Bookmark this page for quick access.
         </p>
       </div>
     </div>
