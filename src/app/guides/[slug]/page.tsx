@@ -7,6 +7,7 @@ import {
 } from "@/lib/mdx";
 import { getProductsByIds } from "@/lib/products";
 import { parseHeadings } from "@/lib/headings";
+import { getFAQBySlug } from "@/lib/faq";
 import MdxRenderer from "@/components/mdx/MdxRenderer";
 import TableOfContents from "@/components/TableOfContents";
 import { RelatedContent } from "@/components/RelatedContent";
@@ -17,7 +18,9 @@ import { JsonLd } from "@/components/JsonLd";
 import {
   generateBreadcrumbJsonLd,
   generateArticleJsonLd,
+  generateFAQJsonLd,
 } from "@/lib/jsonld";
+import { FAQ } from "@/components/FAQ";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -68,6 +71,7 @@ export default async function GuidePage({ params }: Props) {
   const products = getProductsByIds(item.meta.productIds ?? []);
   const path = `/guides/${slug}`;
   const headings = parseHeadings(item.content);
+  const faqItems = getFAQBySlug(slug);
   const showToc = headings.length >= 4;
 
   const breadcrumbItems = [{ label: "Guides", href: "/guides" }, { label: item.meta.title }];
@@ -77,6 +81,9 @@ export default async function GuidePage({ params }: Props) {
       <article>
         <JsonLd data={generateBreadcrumbJsonLd(breadcrumbItems)} />
         <JsonLd data={generateArticleJsonLd(item.meta, path)} />
+        {faqItems.length > 0 && (
+          <JsonLd data={generateFAQJsonLd(faqItems)} />
+        )}
 
         <Breadcrumbs items={breadcrumbItems} />
 
@@ -120,6 +127,8 @@ export default async function GuidePage({ params }: Props) {
         <div className="prose">
           <MdxRenderer source={item.content} />
         </div>
+
+        {faqItems.length > 0 && <FAQ items={faqItems} />}
 
         <ShareButtons title={item.meta.title} url={`https://toddlertravelgear.com${path}`} />
 

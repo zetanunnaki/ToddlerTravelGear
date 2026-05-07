@@ -6,7 +6,8 @@ import {
   getRelatedContent,
 } from "@/lib/mdx";
 import { getProductsByIds } from "@/lib/products";
-import { parseHeadings, parseFAQItems } from "@/lib/headings";
+import { parseHeadings } from "@/lib/headings";
+import { getFAQBySlug } from "@/lib/faq";
 import MdxRenderer from "@/components/mdx/MdxRenderer";
 import TableOfContents from "@/components/TableOfContents";
 
@@ -15,6 +16,7 @@ import { MentionedProducts } from "@/components/MentionedProducts";
 import { ShareButtons } from "@/components/ShareButtons";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { AffiliateDisclaimer } from "@/components/AffiliateDisclaimer";
+import { FAQ } from "@/components/FAQ";
 import { JsonLd } from "@/components/JsonLd";
 import {
   generateBreadcrumbJsonLd,
@@ -74,7 +76,7 @@ export default async function ReviewPage({ params }: Props) {
   const products = getProductsByIds(item.meta.productIds ?? []);
   const path = `/reviews/${slug}`;
   const headings = parseHeadings(item.content);
-  const faqItems = parseFAQItems(item.content);
+  const faqItems = getFAQBySlug(slug);
   const showToc = headings.length >= 4;
 
   const breadcrumbItems = [{ label: "Reviews", href: "/reviews" }, { label: item.meta.title }];
@@ -137,6 +139,8 @@ export default async function ReviewPage({ params }: Props) {
         <div className="prose">
           <MdxRenderer source={item.content} />
         </div>
+
+        {faqItems.length > 0 && <FAQ items={faqItems} />}
 
         <ShareButtons title={item.meta.title} url={`https://toddlertravelgear.com${path}`} />
 

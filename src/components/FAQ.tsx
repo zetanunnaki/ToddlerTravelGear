@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { generateFAQJsonLd } from "@/lib/jsonld";
 
 interface FAQItem {
   question: string;
@@ -18,10 +17,6 @@ export function FAQ({ items = [] }: FAQProps) {
 
   return (
     <div className="my-10">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(generateFAQJsonLd(items)) }}
-      />
       <h2 className="font-display text-xl font-bold text-gray-900 mb-4">
         Frequently Asked Questions
       </h2>
