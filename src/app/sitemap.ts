@@ -1,6 +1,8 @@
 import type { MetadataRoute } from "next";
 import { getAllRoundups, getAllReviews, getAllGuides } from "@/lib/mdx";
 
+export const dynamic = "force-static";
+
 const SITE_URL = "https://toddlertravelgear.com";
 
 export default function sitemap(): MetadataRoute.Sitemap {
