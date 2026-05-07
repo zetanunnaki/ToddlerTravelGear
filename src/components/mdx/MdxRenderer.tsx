@@ -8,6 +8,7 @@ import { ComparisonTable } from "@/components/ComparisonTable";
 import { SafetyNote } from "@/components/SafetyNote";
 import { AgeChecklist } from "@/components/AgeChecklist";
 import { FAQ } from "@/components/FAQ";
+import { PackingListFAQ } from "@/components/PackingListFAQ";
 import { AffiliateDisclaimer } from "@/components/AffiliateDisclaimer";
 
 const components = {
@@ -17,6 +18,7 @@ const components = {
   SafetyNote,
   AgeChecklist,
   FAQ,
+  PackingListFAQ,
   AffiliateDisclaimer,
 };
 

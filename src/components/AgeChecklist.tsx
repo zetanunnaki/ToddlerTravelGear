@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { PACKING_LIST_ITEMS } from "@/data/packing-list-items";
 
 interface AgeChecklistProps {
   ageRange: string;
-  items: string[];
+  items?: string[];
 }
 
 const CATEGORIES: Record<string, string[]> = {
@@ -37,11 +38,51 @@ const CATEGORY_ICONS: Record<string, string> = {
   "Organization & Misc": "🏷️",
 };
 
+function renderItemText(text: string) {
+  const parts = text.split(/(\[[^\]]+\]\([^)]+\))/g);
+  return parts.map((part, i) => {
+    const match = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+    if (match) {
+      return (
+        <a key={i} href={match[2]} className="text-teal-600 underline underline-offset-2 hover:text-teal-800 transition-colors">
+          {match[1]}
+        </a>
+      );
+    }
+    return part;
+  });
+}
+
 function getStorageKey(ageRange: string) {
   return `ttg-checklist-${ageRange.replace(/\s+/g, "-").toLowerCase()}`;
 }
 
-export function AgeChecklist({ ageRange, items = [] }: AgeChecklistProps) {
+function getSectionId(ageRange: string) {
+  return `checklist-${ageRange.replace(/[^a-zA-Z0-9]+/g, "-").toLowerCase()}`;
+}
+
+function printSection(el: HTMLElement, ageRange: string) {
+  const printWindow = window.open("", "_blank");
+  if (!printWindow) return;
+
+  const styles = Array.from(document.querySelectorAll('link[rel="stylesheet"], style'))
+    .map(s => s.outerHTML)
+    .join("\n");
+
+  printWindow.document.write(`<!DOCTYPE html><html><head><title>Packing Checklist: ${ageRange}</title>${styles}
+    <style>body{padding:24px}@media print{.print\\:hidden{display:none!important}}</style>
+    </head><body>${el.outerHTML}</body></html>`);
+  printWindow.document.close();
+  printWindow.onload = () => {
+    printWindow.focus();
+    printWindow.print();
+    printWindow.close();
+  };
+}
+
+export function AgeChecklist({ ageRange, items }: AgeChecklistProps) {
+  const resolvedItems = items && items.length > 0 ? items : PACKING_LIST_ITEMS[ageRange] ?? [];
+  const sectionRef = useRef<HTMLDivElement>(null);
   const [checked, setChecked] = useState<Set<number>>(new Set());
   const [loaded, setLoaded] = useState(false);
   const [showByCategory, setShowByCategory] = useState(true);
@@ -60,7 +101,7 @@ export function AgeChecklist({ ageRange, items = [] }: AgeChecklistProps) {
     } catch {}
   }, [ageRange]);
 
-  if (!items || items.length === 0) return null;
+  if (resolvedItems.length === 0) return null;
 
   const toggle = (i: number) => {
     setChecked((prev) => {
@@ -79,14 +120,14 @@ export function AgeChecklist({ ageRange, items = [] }: AgeChecklistProps) {
   };
 
   const checkAll = () => {
-    const all = new Set(items.map((_, i) => i));
+    const all = new Set(resolvedItems.map((_, i) => i));
     setChecked(all);
     persist(all);
   };
 
-  const progress = items.length > 0 ? Math.round((checked.size / items.length) * 100) : 0;
+  const progress = resolvedItems.length > 0 ? Math.round((checked.size / resolvedItems.length) * 100) : 0;
 
-  const categorized = items.reduce<Record<string, { item: string; index: number }[]>>((acc, item, i) => {
+  const categorized = resolvedItems.reduce<Record<string, { item: string; index: number }[]>>((acc, item, i) => {
     const cat = categorizeItem(item);
     if (!acc[cat]) acc[cat] = [];
     acc[cat].push({ item, index: i });
@@ -111,14 +152,36 @@ export function AgeChecklist({ ageRange, items = [] }: AgeChecklistProps) {
               : "text-gray-700"
           }`}
         >
-          {item}
+          {renderItemText(item)}
         </span>
       </label>
     </li>
   );
 
+  const sectionId = getSectionId(ageRange);
+
+  const handleShare = async () => {
+    const url = `${window.location.origin}${window.location.pathname}#${sectionId}`;
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `Packing Checklist: ${ageRange}`,
+          text: `Interactive packing checklist for ${ageRange} — check items off and your progress saves automatically.`,
+          url,
+        });
+      } catch {}
+    } else {
+      await navigator.clipboard.writeText(url);
+      alert("Link copied! Save it as a bookmark for quick access on your phone.");
+    }
+  };
+
+  const handlePrint = () => {
+    if (sectionRef.current) printSection(sectionRef.current, ageRange);
+  };
+
   return (
-    <div className="border-2 border-teal-200 rounded-xl my-8 bg-white shadow-sm print:border print:border-gray-300 print:shadow-none">
+    <div id={sectionId} ref={sectionRef} className="border-2 border-teal-200 rounded-xl my-8 bg-white shadow-sm print:border print:border-gray-300 print:shadow-none">
       {/* Header */}
       <div className="bg-teal-50 px-5 py-4 rounded-t-xl border-b border-teal-100 print:bg-white">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -127,31 +190,18 @@ export function AgeChecklist({ ageRange, items = [] }: AgeChecklistProps) {
               {CATEGORY_ICONS["Gear & Transport"]} Packing Checklist: {ageRange}
             </h3>
             <p className="text-sm text-gray-500 mt-0.5">
-              {checked.size} of {items.length} items packed
+              {checked.size} of {resolvedItems.length} items packed
             </p>
           </div>
           <div className="flex items-center gap-2 print:hidden">
             <button
-              onClick={async () => {
-                if (navigator.share) {
-                  try {
-                    await navigator.share({
-                      title: `Toddler Packing Checklist: ${ageRange}`,
-                      text: `Interactive packing checklist for traveling with a ${ageRange} child — check items off and your progress saves automatically.`,
-                      url: window.location.href,
-                    });
-                  } catch {}
-                } else {
-                  await navigator.clipboard.writeText(window.location.href);
-                  alert("Link copied! Save it as a bookmark for quick access on your phone.");
-                }
-              }}
+              onClick={handleShare}
               className="text-xs font-medium text-white bg-teal-600 px-3 py-1.5 rounded-lg hover:bg-teal-700 transition-colors"
             >
               Save / Share
             </button>
             <button
-              onClick={() => window.print()}
+              onClick={handlePrint}
               className="text-xs font-medium text-teal-700 bg-white border border-teal-200 px-3 py-1.5 rounded-lg hover:bg-teal-50 transition-colors"
             >
               Print
@@ -173,7 +223,7 @@ export function AgeChecklist({ ageRange, items = [] }: AgeChecklistProps) {
             aria-valuenow={progress}
             aria-valuemin={0}
             aria-valuemax={100}
-            aria-label={`Packing progress: ${checked.size} of ${items.length} items packed`}
+            aria-label={`Packing progress: ${checked.size} of ${resolvedItems.length} items packed`}
           >
             <div
               className={`h-full rounded-full transition-all duration-500 ease-out ${
@@ -245,7 +295,7 @@ export function AgeChecklist({ ageRange, items = [] }: AgeChecklistProps) {
             </div>
           ) : (
             <ul className="space-y-0.5 print:space-y-0">
-              {items.map((item, i) => renderItem(item, i))}
+              {resolvedItems.map((item, i) => renderItem(item, i))}
             </ul>
           )
         ) : (
