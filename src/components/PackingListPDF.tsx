@@ -1,10 +1,10 @@
 "use client";
 
-import { useTripType } from "@/components/PackingListProvider";
+import { usePackingList } from "@/components/PackingListProvider";
 import { TRIP_TYPES } from "@/data/trip-type-items";
 
 export function PackingListPDF() {
-  const { tripType } = useTripType();
+  const { tripType } = usePackingList();
 
   const handlePDF = () => {
     const sections = document.querySelectorAll('[id^="checklist-"]');

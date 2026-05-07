@@ -10,6 +10,7 @@ import { AgeChecklist } from "@/components/AgeChecklist";
 import { FAQ } from "@/components/FAQ";
 import { AffiliateDisclaimer } from "@/components/AffiliateDisclaimer";
 import { PackingListProvider } from "@/components/PackingListProvider";
+import { AgeSelector } from "@/components/AgeSelector";
 import { TripTypeBar } from "@/components/TripTypeBar";
 import { PackingListPDF } from "@/components/PackingListPDF";
 
@@ -22,6 +23,7 @@ const components = {
   FAQ,
   AffiliateDisclaimer,
   PackingListProvider,
+  AgeSelector,
   TripTypeBar,
   PackingListPDF,
 };

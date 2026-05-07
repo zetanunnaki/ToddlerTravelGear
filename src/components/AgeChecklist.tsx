@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { PACKING_LIST_ITEMS } from "@/data/packing-list-items";
-import { useTripType } from "@/components/PackingListProvider";
+import { usePackingList } from "@/components/PackingListProvider";
 import { TRIP_TYPES, type TripType } from "@/data/trip-type-items";
 
 interface AgeChecklistProps {
@@ -94,8 +94,9 @@ function printSection(el: HTMLElement, ageRange: string) {
   };
 }
 
-export function AgeChecklist({ ageRange, items }: AgeChecklistProps) {
-  const { tripType } = useTripType();
+export function AgeChecklist({ ageRange: ageRangeProp, items }: AgeChecklistProps) {
+  const { tripType, ageRange: ageRangeCtx } = usePackingList();
+  const ageRange = ageRangeProp || ageRangeCtx;
 
   // Base items from props or data file
   const baseItems = items && items.length > 0 ? items : PACKING_LIST_ITEMS[ageRange] ?? [];

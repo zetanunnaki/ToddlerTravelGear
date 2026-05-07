@@ -1,6 +1,6 @@
 "use client";
 
-import { useTripType } from "@/components/PackingListProvider";
+import { usePackingList } from "@/components/PackingListProvider";
 import { TRIP_TYPES, type TripType } from "@/data/trip-type-items";
 
 const OPTIONS: { value: TripType; label: string; icon: string }[] = [
@@ -13,7 +13,7 @@ const OPTIONS: { value: TripType; label: string; icon: string }[] = [
 ];
 
 export function TripTypeBar() {
-  const { tripType, setTripType } = useTripType();
+  const { tripType, setTripType } = usePackingList();
 
   return (
     <div className="flex gap-2 overflow-x-auto pb-2 mb-6 -mx-1 px-1 scrollbar-hide">
