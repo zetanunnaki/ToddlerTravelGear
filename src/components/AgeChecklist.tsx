@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { PACKING_LIST_ITEMS } from "@/data/packing-list-items";
+import { useTripType } from "@/components/PackingListProvider";
+import { TRIP_TYPES, type TripType } from "@/data/trip-type-items";
 
 interface AgeChecklistProps {
   ageRange: string;
@@ -53,8 +55,20 @@ function renderItemText(text: string) {
   });
 }
 
+function shouldDimItem(text: string, tripType: TripType): boolean {
+  if (tripType === "all") return false;
+  const config = TRIP_TYPES[tripType];
+  if (!config) return false;
+  const lower = text.toLowerCase();
+  return config.dim.some(pattern => lower.includes(pattern));
+}
+
 function getStorageKey(ageRange: string) {
   return `ttg-checklist-${ageRange.replace(/\s+/g, "-").toLowerCase()}`;
+}
+
+function getCustomItemsKey(ageRange: string) {
+  return `ttg-custom-${ageRange.replace(/\s+/g, "-").toLowerCase()}`;
 }
 
 function getSectionId(ageRange: string) {
@@ -81,16 +95,40 @@ function printSection(el: HTMLElement, ageRange: string) {
 }
 
 export function AgeChecklist({ ageRange, items }: AgeChecklistProps) {
-  const resolvedItems = items && items.length > 0 ? items : PACKING_LIST_ITEMS[ageRange] ?? [];
+  const { tripType } = useTripType();
+
+  // Base items from props or data file
+  const baseItems = items && items.length > 0 ? items : PACKING_LIST_ITEMS[ageRange] ?? [];
+
+  // Trip extras: items added by the active trip type
+  const tripExtras: string[] =
+    tripType !== "all" && TRIP_TYPES[tripType]?.add[ageRange]
+      ? TRIP_TYPES[tripType].add[ageRange]!
+      : [];
+  const tripExtraStartIndex = baseItems.length;
+
+  // Custom items state
+  const [customItems, setCustomItems] = useState<string[]>([]);
+  const [newItemText, setNewItemText] = useState("");
+  const customStartIndex = baseItems.length + tripExtras.length;
+
+  // Combined resolved items
+  const resolvedItems = [...baseItems, ...tripExtras, ...customItems];
+
   const sectionRef = useRef<HTMLDivElement>(null);
   const [checked, setChecked] = useState<Set<number>>(new Set());
   const [loaded, setLoaded] = useState(false);
   const [showByCategory, setShowByCategory] = useState(true);
 
+  // Load checked state and custom items from localStorage
   useEffect(() => {
     try {
       const saved = localStorage.getItem(getStorageKey(ageRange));
       if (saved) setChecked(new Set(JSON.parse(saved)));
+    } catch {}
+    try {
+      const savedCustom = localStorage.getItem(getCustomItemsKey(ageRange));
+      if (savedCustom) setCustomItems(JSON.parse(savedCustom));
     } catch {}
     setLoaded(true);
   }, [ageRange]);
@@ -101,7 +139,13 @@ export function AgeChecklist({ ageRange, items }: AgeChecklistProps) {
     } catch {}
   }, [ageRange]);
 
-  if (resolvedItems.length === 0) return null;
+  const persistCustomItems = useCallback((items: string[]) => {
+    try {
+      localStorage.setItem(getCustomItemsKey(ageRange), JSON.stringify(items));
+    } catch {}
+  }, [ageRange]);
+
+  if (baseItems.length === 0 && tripExtras.length === 0 && customItems.length === 0) return null;
 
   const toggle = (i: number) => {
     setChecked((prev) => {
@@ -125,6 +169,33 @@ export function AgeChecklist({ ageRange, items }: AgeChecklistProps) {
     persist(all);
   };
 
+  const addCustomItem = () => {
+    const text = newItemText.trim();
+    if (!text) return;
+    const next = [...customItems, text];
+    setCustomItems(next);
+    persistCustomItems(next);
+    setNewItemText("");
+  };
+
+  const removeCustomItem = (customIndex: number) => {
+    const next = customItems.filter((_, i) => i !== customIndex);
+    setCustomItems(next);
+    persistCustomItems(next);
+    // Also remove the checked state for the removed item and shift higher indices
+    setChecked((prev) => {
+      const removedGlobalIndex = customStartIndex + customIndex;
+      const updated = new Set<number>();
+      for (const idx of prev) {
+        if (idx === removedGlobalIndex) continue;
+        if (idx > removedGlobalIndex) updated.add(idx - 1);
+        else updated.add(idx);
+      }
+      persist(updated);
+      return updated;
+    });
+  };
+
   const progress = resolvedItems.length > 0 ? Math.round((checked.size / resolvedItems.length) * 100) : 0;
 
   const categorized = resolvedItems.reduce<Record<string, { item: string; index: number }[]>>((acc, item, i) => {
@@ -136,29 +207,73 @@ export function AgeChecklist({ ageRange, items }: AgeChecklistProps) {
 
   const categoryOrder = Object.keys(CATEGORIES).filter(c => categorized[c]);
 
-  const renderItem = (item: string, i: number) => (
-    <li key={i} className="group">
-      <label className="flex items-start gap-3 cursor-pointer py-1.5 px-2 -mx-2 rounded-lg hover:bg-gray-50 transition-colors">
-        <input
-          type="checkbox"
-          checked={checked.has(i)}
-          onChange={() => toggle(i)}
-          className="w-5 h-5 mt-0.5 rounded border-gray-300 text-teal-600 focus:ring-teal-500 flex-shrink-0 print:w-4 print:h-4"
-        />
-        <span
-          className={`text-sm leading-relaxed transition-colors ${
-            checked.has(i)
-              ? "line-through text-gray-400"
-              : "text-gray-700"
-          }`}
+  const renderItem = (item: string, i: number) => {
+    const isTripExtra = i >= tripExtraStartIndex && i < customStartIndex;
+    const isCustom = i >= customStartIndex;
+    const isDimmed = !isTripExtra && !isCustom && shouldDimItem(item, tripType);
+
+    return (
+      <li key={i} className="group">
+        <label
+          className={`flex items-start gap-3 cursor-pointer py-1.5 px-2 -mx-2 rounded-lg transition-colors ${
+            isTripExtra
+              ? "bg-teal-50 border-l-3 border-teal-400 ml-0 pl-3"
+              : isCustom
+              ? "border-l-2 border-dotted border-gray-300 ml-0 pl-3"
+              : "hover:bg-gray-50"
+          } ${isDimmed ? "opacity-35" : ""}`}
         >
-          {renderItemText(item)}
-        </span>
-      </label>
-    </li>
-  );
+          <input
+            type="checkbox"
+            checked={checked.has(i)}
+            onChange={() => toggle(i)}
+            className="w-5 h-5 mt-0.5 rounded border-gray-300 text-teal-600 focus:ring-teal-500 flex-shrink-0 print:w-4 print:h-4"
+          />
+          <span
+            className={`text-sm leading-relaxed transition-colors flex-1 ${
+              checked.has(i)
+                ? "line-through text-gray-400"
+                : isDimmed
+                ? "line-through text-gray-400"
+                : "text-gray-700"
+            }`}
+          >
+            {renderItemText(item)}
+            {isTripExtra && tripType !== "all" && (
+              <span className="ml-2 inline-block text-[10px] font-semibold uppercase tracking-wide text-teal-700 bg-teal-100 px-1.5 py-0.5 rounded">
+                {TRIP_TYPES[tripType].label}
+              </span>
+            )}
+          </span>
+          {isCustom && (
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                removeCustomItem(i - customStartIndex);
+              }}
+              className="text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 flex-shrink-0 print:hidden"
+              aria-label={`Remove custom item: ${item}`}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </button>
+          )}
+        </label>
+      </li>
+    );
+  };
 
   const sectionId = getSectionId(ageRange);
+
+  // Subtitle info for trip mode
+  const tripSubtitle =
+    tripType !== "all" && tripExtras.length > 0
+      ? `${TRIP_TYPES[tripType].icon} ${TRIP_TYPES[tripType].label} mode — ${tripExtras.length} added`
+      : tripType !== "all"
+      ? `${TRIP_TYPES[tripType].icon} ${TRIP_TYPES[tripType].label} mode`
+      : null;
 
   const handleShare = async () => {
     const url = `${window.location.origin}${window.location.pathname}#${sectionId}`;
@@ -191,6 +306,9 @@ export function AgeChecklist({ ageRange, items }: AgeChecklistProps) {
             </h3>
             <p className="text-sm text-gray-500 mt-0.5">
               {checked.size} of {resolvedItems.length} items packed
+              {tripSubtitle && (
+                <span className="ml-2 text-teal-600 font-medium">{tripSubtitle}</span>
+              )}
             </p>
           </div>
           <div className="flex items-center gap-2 print:hidden">
@@ -301,6 +419,32 @@ export function AgeChecklist({ ageRange, items }: AgeChecklistProps) {
         ) : (
           <div className="text-center py-8 text-gray-500 text-sm">Loading your checklist...</div>
         )}
+      </div>
+
+      {/* Custom item input */}
+      <div className="px-5 pb-4 print:hidden">
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={newItemText}
+            onChange={(e) => setNewItemText(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                addCustomItem();
+              }
+            }}
+            placeholder="Add your own item..."
+            className="flex-1 text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent placeholder-gray-400"
+          />
+          <button
+            onClick={addCustomItem}
+            disabled={!newItemText.trim()}
+            className="text-xs font-medium text-white bg-teal-600 px-4 py-2 rounded-lg hover:bg-teal-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            Add
+          </button>
+        </div>
       </div>
 
       {/* Footer — save hint */}
