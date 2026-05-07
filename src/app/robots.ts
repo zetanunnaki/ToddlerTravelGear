@@ -36,5 +36,6 @@ export default function robots(): MetadataRoute.Robots {
       },
     ],
     sitemap: "https://toddlertravelgear.com/sitemap.xml",
+    host: "https://toddlertravelgear.com",
   };
 }

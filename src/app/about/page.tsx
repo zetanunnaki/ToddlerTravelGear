@@ -1,16 +1,21 @@
 import type { Metadata } from "next";
+import { JsonLd } from "@/components/JsonLd";
+import { generateOrganizationJsonLd, generateBreadcrumbJsonLd } from "@/lib/jsonld";
 
 export const metadata: Metadata = {
   title: "About Us",
   description:
     "Learn about ToddlerTravelGear — who we are and why we review travel gear for families with young children.",
+  alternates: { canonical: "/about" },
 };
 
 export default function AboutPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">About Us</h1>
-      <div className="prose max-w-none">
+      <JsonLd data={generateOrganizationJsonLd()} />
+      <JsonLd data={generateBreadcrumbJsonLd([{ label: "About" }])} />
+      <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">About Us</h1>
+      <div className="prose dark:prose-invert max-w-none">
         <p>
           ToddlerTravelGear was created by parents who got tired of wading
           through generic &ldquo;best of&rdquo; lists that clearly never folded

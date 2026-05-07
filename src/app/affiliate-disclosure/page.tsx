@@ -4,15 +4,16 @@ export const metadata: Metadata = {
   title: "Affiliate Disclosure",
   description:
     "ToddlerTravelGear affiliate disclosure — how we earn revenue and our commitment to honest recommendations.",
+  alternates: { canonical: "/affiliate-disclosure" },
 };
 
 export default function AffiliateDisclosurePage() {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">
+      <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
         Affiliate Disclosure
       </h1>
-      <div className="prose max-w-none">
+      <div className="prose dark:prose-invert max-w-none">
         <p>
           ToddlerTravelGear.com is a participant in the Amazon Services LLC
           Associates Program, an affiliate advertising program designed to

@@ -1,16 +1,20 @@
 import type { Metadata } from "next";
+import { JsonLd } from "@/components/JsonLd";
+import { generateBreadcrumbJsonLd } from "@/lib/jsonld";
 
 export const metadata: Metadata = {
   title: "Contact Us",
   description:
     "Get in touch with the ToddlerTravelGear team for questions, feedback, or partnership inquiries.",
+  alternates: { canonical: "/contact" },
 };
 
 export default function ContactPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">Contact Us</h1>
-      <div className="prose max-w-none">
+      <JsonLd data={generateBreadcrumbJsonLd([{ label: "Contact" }])} />
+      <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">Contact Us</h1>
+      <div className="prose dark:prose-invert max-w-none">
         <p>
           Have a question, suggestion, or product you think we should review?
           We&apos;d love to hear from you.

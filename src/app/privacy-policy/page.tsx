@@ -4,15 +4,16 @@ export const metadata: Metadata = {
   title: "Privacy Policy",
   description:
     "ToddlerTravelGear privacy policy — how we collect, use, and protect your information.",
+  alternates: { canonical: "/privacy-policy" },
 };
 
 export default function PrivacyPolicyPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">
+      <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
         Privacy Policy
       </h1>
-      <div className="prose max-w-none">
+      <div className="prose dark:prose-invert max-w-none">
         <p>
           <em>Last updated: April 2026</em>
         </p>

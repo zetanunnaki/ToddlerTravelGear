@@ -1,0 +1,34 @@
+# ToddlerTravelGear
+
+> Honest, safety-first gear recommendations for parents traveling with babies and toddlers.
+
+ToddlerTravelGear.com is an independent review site covering travel gear for families with children ages 0-4. We publish in-depth product reviews, category roundups, and travel guides based on real-world parent testing.
+
+## Content Categories
+
+- **Product Reviews** (133 reviews): Individual gear reviews with safety notes, age-by-age breakdowns, and comparison sections. Categories include travel strollers, car seats, portable cribs, carriers, feeding gear, sleep accessories, toys, safety/baby-proofing, bath/hygiene, packing organizers, stroller accessories, and more.
+- **Best Picks Roundups** (14 guides): Curated category roundups comparing top products side-by-side with testing methodology and pick rationale.
+- **Travel Guides** (20 guides): Practical guides covering flying with toddlers, road trips, international travel, packing lists, hotel baby-proofing, jet lag management, and more.
+
+## Key Topics
+
+- FAA-approved car seats for flying
+- Travel strollers that fit in airplane overhead bins
+- Portable cribs and travel sleep solutions
+- Gate-checking strollers and car seats
+- Toddler packing checklists by age
+- Baby-proofing hotel rooms and vacation rentals
+- Road trip gear and entertainment
+- Travel feeding and bottle solutions
+
+## Site Structure
+
+- `/best/[category]` — Roundup guides (e.g., /best/travel-strollers-for-flying)
+- `/reviews/[product]` — Individual product reviews (e.g., /reviews/stokke-yoyo3)
+- `/guides/[topic]` — Travel guides (e.g., /guides/flying-with-toddler-complete-guide)
+- `/sitemap.xml` — Full sitemap with all URLs
+
+## Contact
+
+- Website: https://toddlertravelgear.com
+- Email: contact@toddlertravelgear.com

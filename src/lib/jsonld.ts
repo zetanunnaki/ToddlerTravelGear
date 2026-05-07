@@ -162,6 +162,7 @@ export function generateWebSiteJsonLd() {
 }
 
 export function generateOrganizationJsonLd() {
+  const sameAs = getSameAsUrls();
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -170,7 +171,7 @@ export function generateOrganizationJsonLd() {
     logo: `${SITE_URL}/icon.svg`,
     description:
       "Honest, safety-first gear recommendations for parents traveling with babies and toddlers.",
-    sameAs: getSameAsUrls(),
+    ...(sameAs.length > 0 ? { sameAs } : {}),
   };
 }
 

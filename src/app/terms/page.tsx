@@ -5,15 +5,16 @@ export const metadata: Metadata = {
   title: "Terms of Service",
   description:
     "Terms of Service for ToddlerTravelGear.com — please read these terms carefully before using our site.",
+  alternates: { canonical: "/terms" },
 };
 
 export default function TermsPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">
+      <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
         Terms of Service
       </h1>
-      <div className="prose max-w-none">
+      <div className="prose dark:prose-invert max-w-none">
         <p>
           <em>Last updated: May 2026</em>
         </p>

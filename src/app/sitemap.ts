@@ -78,6 +78,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "yearly",
       priority: 0.2,
     },
+    {
+      url: `${SITE_URL}/terms`,
+      lastModified: "2026-01-01",
+      changeFrequency: "yearly",
+      priority: 0.2,
+    },
   ];
 
   return [...staticPages, ...roundups, ...reviews, ...guides];

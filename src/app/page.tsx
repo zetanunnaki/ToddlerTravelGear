@@ -126,7 +126,7 @@ export default function HomePage() {
               </p>
               <span className="text-teal-600 text-sm font-semibold inline-flex items-center gap-1 group-hover:gap-2 transition-all">
                 Browse Gear
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                 </svg>
               </span>
@@ -151,7 +151,7 @@ export default function HomePage() {
               </p>
               <span className="text-amber-600 text-sm font-semibold inline-flex items-center gap-1 group-hover:gap-2 transition-all">
                 View Guides
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                 </svg>
               </span>
@@ -176,7 +176,7 @@ export default function HomePage() {
               </p>
               <span className="text-emerald-600 text-sm font-semibold inline-flex items-center gap-1 group-hover:gap-2 transition-all">
                 Get the List
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                 </svg>
               </span>
@@ -203,7 +203,7 @@ export default function HomePage() {
               className="text-teal-600 font-semibold text-sm hover:text-teal-800 transition-colors hidden sm:inline-flex items-center gap-1"
             >
               View All
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </Link>
@@ -221,7 +221,7 @@ export default function HomePage() {
                     {item.meta.featuredImage && (
                       <Image
                         src={item.meta.featuredImage}
-                        alt={item.meta.title}
+                        alt={item.meta.title || `Best ${item.meta.category} gear for toddler travel`}
                         fill
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                         className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -252,7 +252,7 @@ export default function HomePage() {
             className="text-teal-600 font-semibold text-sm hover:text-teal-800 transition-colors mt-8 inline-flex items-center gap-1 sm:hidden"
           >
             View All Roundups
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
             </svg>
           </Link>
@@ -277,7 +277,7 @@ export default function HomePage() {
               className="text-teal-600 font-semibold text-sm hover:text-teal-800 transition-colors hidden sm:inline-flex items-center gap-1"
             >
               View All
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </Link>
@@ -331,7 +331,7 @@ export default function HomePage() {
               className="text-teal-600 font-semibold text-sm hover:text-teal-800 transition-colors hidden sm:inline-flex items-center gap-1"
             >
               View All
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </Link>
