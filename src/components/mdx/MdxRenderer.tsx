@@ -9,6 +9,9 @@ import { SafetyNote } from "@/components/SafetyNote";
 import { AgeChecklist } from "@/components/AgeChecklist";
 import { FAQ } from "@/components/FAQ";
 import { AffiliateDisclaimer } from "@/components/AffiliateDisclaimer";
+import { PackingListProvider } from "@/components/PackingListProvider";
+import { TripTypeBar } from "@/components/TripTypeBar";
+import { PackingListPDF } from "@/components/PackingListPDF";
 
 const components = {
   ProductCard,
@@ -18,6 +21,9 @@ const components = {
   AgeChecklist,
   FAQ,
   AffiliateDisclaimer,
+  PackingListProvider,
+  TripTypeBar,
+  PackingListPDF,
 };
 
 export default function MdxRenderer({ source }: { source: string }) {

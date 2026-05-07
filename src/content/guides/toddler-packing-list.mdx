@@ -5,7 +5,7 @@ description: "Interactive toddler packing checklist organized by age — check i
 category: "Packing"
 type: "guide"
 publishedAt: "2024-06-03"
-updatedAt: "2026-03-20"
+updatedAt: "2026-05-07"
 author: "ToddlerTravelGear Team"
 featuredImage: "/images/covers/toddler-packing-list.jpg"
 tags:
@@ -21,13 +21,20 @@ Check items off as you pack — your progress saves automatically on your phone 
 
 **How to use this checklist:**
 
-1. Find your child's age group below
-2. Tap items as you pack them — the progress bar tracks what is left
-3. Switch between "By Category" (grouped by type) and "Full List" (everything in order)
-4. Hit "Print" for a paper version to tape to your suitcase lid
-5. Bookmark this page — your checks are saved on this device
+1. Pick your trip type below — beach, winter, camping, city, or road trip — to see trip-specific items
+2. Find your child's age group
+3. Tap items as you pack them — the progress bar tracks what is left
+4. Add your own items at the bottom of any section
+5. Switch between "By Category" (grouped by type) and "Full List" (everything in order)
+6. Hit "Download PDF" for a paper version or "Print" for a single section
 
 Skip items that do not apply to your trip. Every family is different. This list is deliberately thorough so you can cross things off rather than wonder what you forgot.
+
+<PackingListProvider>
+
+<TripTypeBar />
+
+<PackingListPDF />
 
 ---
 
@@ -58,6 +65,8 @@ Two-to-four-year-olds can carry their own backpack, choose their own snacks, and
 <AgeChecklist ageRange="2–4 Years" />
 
 **Let them pack their own backpack.** Give them their backpack and 5 approved items. They pick which toys, which snacks, which coloring book. Kids who pack their own bag are invested in the trip from the start.
+
+</PackingListProvider>
 
 ---
 
