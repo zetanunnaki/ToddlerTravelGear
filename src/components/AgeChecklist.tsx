@@ -195,14 +195,14 @@ export function AgeChecklist({ ageRange: ageRangeProp, items }: AgeChecklistProp
     const isDimmed = !isTripExtra && !isCustom && shouldDimItem(item, tripType);
 
     return (
-      <li key={i} className="group">
+      <li key={i} className="group list-none m-0 p-0">
         <label
-          className={`flex items-start gap-3 cursor-pointer py-1.5 px-2 -mx-2 rounded-lg transition-colors ${
+          className={`flex items-start gap-3 cursor-pointer py-2.5 sm:py-1.5 px-2 -mx-2 rounded-lg transition-colors ${
             isTripExtra
               ? "bg-teal-50 border-l-3 border-teal-400 ml-0 pl-3"
               : isCustom
               ? "border-l-2 border-dotted border-gray-300 ml-0 pl-3"
-              : "hover:bg-gray-50"
+              : "hover:bg-gray-50 active:bg-gray-100"
           } ${isDimmed ? "opacity-35" : ""}`}
         >
           <input
@@ -234,7 +234,7 @@ export function AgeChecklist({ ageRange: ageRangeProp, items }: AgeChecklistProp
                 e.stopPropagation();
                 removeCustomItem(i - customStartIndex);
               }}
-              className="text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 flex-shrink-0 print:hidden"
+              className="text-gray-400 hover:text-red-500 transition-colors sm:opacity-0 sm:group-hover:opacity-100 flex-shrink-0 print:hidden p-1 min-w-[28px] min-h-[28px] flex items-center justify-center"
               aria-label={`Remove custom item: ${item}`}
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
@@ -259,35 +259,33 @@ export function AgeChecklist({ ageRange: ageRangeProp, items }: AgeChecklistProp
 
 
   return (
-    <div id={sectionId} className="border-2 border-teal-200 rounded-xl my-8 bg-white shadow-sm print:border print:border-gray-300 print:shadow-none">
+    <div id={sectionId} className="not-prose border-2 border-teal-200 rounded-xl my-8 bg-white shadow-sm print:border print:border-gray-300 print:shadow-none">
       {/* Header */}
-      <div className="bg-teal-50 px-5 py-4 rounded-t-xl border-b border-teal-100 print:bg-white">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <h3 className="text-lg font-bold text-gray-900 print:text-base">
-              {CATEGORY_ICONS["Gear & Transport"]} Packing Checklist: {ageRange}
+      <div className="bg-teal-50 px-4 sm:px-5 py-4 rounded-t-xl border-b border-teal-100 print:bg-white">
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <h3 className="text-base sm:text-lg font-bold text-gray-900 print:text-base truncate">
+              {CATEGORY_ICONS["Gear & Transport"]} {ageRange}
             </h3>
             <p className="text-sm text-gray-500 mt-0.5">
-              {checked.size} of {resolvedItems.length} items packed
+              {checked.size} of {resolvedItems.length} packed
               {tripSubtitle && (
                 <span className="ml-2 text-teal-600 font-medium">{tripSubtitle}</span>
               )}
             </p>
           </div>
-          <div className="flex items-center gap-2 print:hidden">
-            <button
-              onClick={clearAll}
-              className="text-xs font-medium text-gray-500 bg-white border border-gray-200 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors"
-            >
-              Reset
-            </button>
-          </div>
+          <button
+            onClick={clearAll}
+            className="text-xs font-medium text-gray-500 bg-white border border-gray-200 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors flex-shrink-0 min-h-[36px] print:hidden"
+          >
+            Reset
+          </button>
         </div>
 
         {/* Progress bar */}
         <div className="mt-3 print:hidden">
           <div
-            className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden"
+            className="w-full bg-gray-200 rounded-full h-3 overflow-hidden"
             role="progressbar"
             aria-valuenow={progress}
             aria-valuemin={0}
@@ -312,7 +310,7 @@ export function AgeChecklist({ ageRange: ageRangeProp, items }: AgeChecklistProp
         <div className="flex gap-2 mt-3 print:hidden">
           <button
             onClick={() => setShowByCategory(true)}
-            className={`text-xs px-3 py-1 rounded-full transition-colors ${
+            className={`text-sm px-4 py-2 rounded-full transition-colors min-h-[40px] ${
               showByCategory
                 ? "bg-teal-600 text-white"
                 : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
@@ -322,7 +320,7 @@ export function AgeChecklist({ ageRange: ageRangeProp, items }: AgeChecklistProp
           </button>
           <button
             onClick={() => setShowByCategory(false)}
-            className={`text-xs px-3 py-1 rounded-full transition-colors ${
+            className={`text-sm px-4 py-2 rounded-full transition-colors min-h-[40px] ${
               !showByCategory
                 ? "bg-teal-600 text-white"
                 : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
@@ -334,7 +332,7 @@ export function AgeChecklist({ ageRange: ageRangeProp, items }: AgeChecklistProp
       </div>
 
       {/* Items */}
-      <div className="p-5">
+      <div className="px-4 sm:px-5 py-4">
         {loaded ? (
           showByCategory ? (
             <div className="space-y-6">
@@ -355,7 +353,7 @@ export function AgeChecklist({ ageRange: ageRangeProp, items }: AgeChecklistProp
                         {catChecked}/{catItems.length}
                       </span>
                     </div>
-                    <ul className="space-y-0.5 print:space-y-0">
+                    <ul className="list-none p-0 m-0 space-y-0.5 print:space-y-0">
                       {catItems.map(ci => renderItem(ci.item, ci.index))}
                     </ul>
                   </div>
@@ -363,7 +361,7 @@ export function AgeChecklist({ ageRange: ageRangeProp, items }: AgeChecklistProp
               })}
             </div>
           ) : (
-            <ul className="space-y-0.5 print:space-y-0">
+            <ul className="list-none p-0 m-0 space-y-0.5 print:space-y-0">
               {resolvedItems.map((item, i) => renderItem(item, i))}
             </ul>
           )
@@ -373,7 +371,7 @@ export function AgeChecklist({ ageRange: ageRangeProp, items }: AgeChecklistProp
       </div>
 
       {/* Custom item input */}
-      <div className="px-5 pb-4 print:hidden">
+      <div className="px-4 sm:px-5 pb-4 print:hidden">
         <div className="flex gap-2">
           <input
             type="text"
@@ -386,12 +384,12 @@ export function AgeChecklist({ ageRange: ageRangeProp, items }: AgeChecklistProp
               }
             }}
             placeholder="Add your own item..."
-            className="flex-1 text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent placeholder-gray-400"
+            className="flex-1 text-base sm:text-sm border border-gray-200 rounded-lg px-3 py-3 sm:py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent placeholder-gray-400"
           />
           <button
             onClick={addCustomItem}
             disabled={!newItemText.trim()}
-            className="text-xs font-medium text-white bg-teal-600 px-4 py-2 rounded-lg hover:bg-teal-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            className="text-sm font-medium text-white bg-teal-600 px-5 py-3 sm:py-2 rounded-lg hover:bg-teal-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed min-h-[48px] sm:min-h-0"
           >
             Add
           </button>
@@ -399,9 +397,9 @@ export function AgeChecklist({ ageRange: ageRangeProp, items }: AgeChecklistProp
       </div>
 
       {/* Footer */}
-      <div className="bg-gray-50 px-5 py-3 rounded-b-xl border-t border-gray-100 print:hidden">
+      <div className="bg-gray-50 px-4 sm:px-5 py-3 rounded-b-xl border-t border-gray-100 print:hidden">
         <p className="text-xs text-gray-500 text-center">
-          Your progress saves automatically on this device. Bookmark this page for quick access.
+          Your progress saves automatically on this device.
         </p>
       </div>
     </div>

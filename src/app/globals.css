@@ -250,6 +250,14 @@ body {
   }
 }
 
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 @media print {
   header, footer, nav, .print\:hidden, [class*="print:hidden"] {
     display: none !important;

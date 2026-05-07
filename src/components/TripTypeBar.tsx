@@ -21,7 +21,7 @@ export function TripTypeBar() {
         <button
           key={opt.value}
           onClick={() => setTripType(opt.value)}
-          className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap border-2 transition-colors ${
+          className={`flex items-center gap-1.5 px-4 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap border-2 transition-colors min-h-[44px] ${
             tripType === opt.value
               ? "bg-teal-600 text-white border-teal-600"
               : "bg-white text-gray-600 border-gray-200 hover:border-teal-400 hover:text-teal-700"
